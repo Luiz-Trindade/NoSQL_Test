@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - {{ collection }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 font-sans">
+
+    <nav class="bg-slate-800 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">NPJ Admin <span class="font-light text-slate-400">/ {{ collection }}</span>
+            </h1>
+            <a href="/" class="text-sm bg-slate-700 px-3 py-1 rounded hover:bg-slate-600">Voltar para API</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8 p-4">
+
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Gerenciar {{ collection }}</h2>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
+                + Novo Registro
+            </button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-200">
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            ID (UUID)
+                        </th>
+                        {% for campo, tipo in fields.items() %}
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            {{ campo }} <span class="text-gray-400 font-normal">({{ tipo }})</span>
+                        </th>
+                        {% endfor %}
+                        <th class="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Ações
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for uid, valores in data.items() %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-4 border-b border-gray-200 text-sm">
+                            <code class="text-xs bg-gray-100 px-1 rounded text-blue-600">{{ uid }}</code>
+                        </td>
+
+                        {% for campo in fields.keys() %}
+                        <td class="px-5 py-4 border-b border-gray-200 text-sm">
+                            {% if valores[campo] is mapping %}
+                            <div class="flex flex-wrap gap-1">
+                                {% for r_uid, r_data in valores[campo].items() %}
+                                <span
+                                    class="bg-green-100 text-green-800 text-[10px] px-2 py-0.5 rounded-full border border-green-200">
+                                    {{ r_data.nome if r_data.nome else r_uid }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span class="text-gray-900">{{ valores[campo] }}</span>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+
+                        <td class="px-5 py-4 border-b border-gray-200 text-sm text-right">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3">Editar</button>
+                            <button class="text-red-600 hover:text-red-900">Excluir</button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="{{ fields|length + 2 }}"
+                            class="px-5 py-10 border-b border-gray-200 bg-white text-center text-gray-500">
+                            Nenhum registro encontrado na coleção <strong>{{ collection }}</strong>.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+</body>
+
+</html>
